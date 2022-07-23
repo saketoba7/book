@@ -22,9 +22,14 @@ class PostsController < ApplicationController
 
   def index
     @posts = Post.limit(10).includes(:photos, :user).order('created_at DESC')
+    @posts = Post.all
+    @posts = @posts.where('caption LIKE ?', "%#{params[:search]}%") if params[:search].present?
   end
 
+
+ 
   def show
+    
   end
 
   def destroy
@@ -36,6 +41,7 @@ class PostsController < ApplicationController
     redirect_to root_path
   end
 
+  
   private
     def post_params
       params.require(:post).permit(:caption, photos_attributes: [:image]).merge(user_id: current_user.id)
@@ -44,4 +50,6 @@ class PostsController < ApplicationController
     def set_post
       @post = Post.find_by(id: params[:id])
     end
+
+    
 end
